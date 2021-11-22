@@ -1,0 +1,28 @@
+name: MineTracker
+main: bct.loadupstudios.MineTracker.MineTracker
+version: 2.1
+api-version: 1.13
+author: BrandonT80
+website: https://www.loadupstudios.com
+depend:
+prefix: MineTracker
+commands:
+   mt:
+      description: Commands - /mt sound
+      usage: /mt
+permissions:
+  mt.*:
+    desription: Wildcard Permission
+    default: op
+    children:
+      oa.staff: true
+      oa.bypass: true
+      mt.sound: true
+  mt.staff:
+    descripton: Ping Alert Permission
+    default: op
+    children:
+  mt.bypass:
+    descripton: Bypass Ping Alerts
+    default: op
+    children:
