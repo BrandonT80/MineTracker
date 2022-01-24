@@ -5,8 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -34,11 +34,13 @@ public class MyListener implements Listener
 	String[] staffArray;
 	boolean soundOff = false;
 	String bVersion = "";
+	Logger logger;
 	
 	
-	MyListener(FileConfiguration conf, String folder)
+	MyListener(FileConfiguration conf, String folder, Logger l)
 	{
 		config = conf;
+		logger = l;
 		this.folder = folder;
 		noPermSystem = config.getString("nopermissionsystem");
 		if(noPermSystem == "true")
@@ -47,8 +49,7 @@ public class MyListener implements Listener
 		}
 		try
 		{
-			bVersion = Bukkit.getVersion().substring(Bukkit.getVersion().length()-7,Bukkit.getVersion().length()-1);
-			bVersion = bVersion.substring(0,4);
+			bVersion = Bukkit.getVersion();
 		}
 		catch (Exception e)
 		{
@@ -80,9 +81,9 @@ public class MyListener implements Listener
     {
 		if(!event.getPlayer().hasPermission("mt.bypass"))
 		{
-			switch(bVersion)
+			//System.out.println("Version String" + bVersion);
+			if(bVersion.contains("1.18") || bVersion.contains("1.17"))
 			{
-			case "1.17":
 				if((event.getPlayer().getLocation().getY() < 32) && (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHERITE_PICKAXE || event.getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_PICKAXE || event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE))
 				{
 					if(event.getBlock() != null)
@@ -107,8 +108,9 @@ public class MyListener implements Listener
 						}
 					}
 				}
-				break;
-			case "1.16":
+			}
+			else if(bVersion.contains("1.16"))
+			{
 				if((event.getPlayer().getLocation().getY() < 32) && (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHERITE_PICKAXE || event.getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_PICKAXE || event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE))
 				{
 					if(event.getBlock() != null)
@@ -130,8 +132,9 @@ public class MyListener implements Listener
 						}
 					}
 				}
-				break;
-			default:
+			}
+			else
+			{
 				if((event.getPlayer().getLocation().getY() < 32) && (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_PICKAXE || event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE))
 				{
 					if(event.getBlock() != null)
@@ -152,10 +155,10 @@ public class MyListener implements Listener
 						}
 					}
 				}
-				break;
 			}
 		}
-    }
+	}
+    
 	
 	public void updateInformation ( Block block, Player player)
 	{
@@ -201,7 +204,8 @@ public class MyListener implements Listener
 		}
 		catch (Exception e)
 		{
-			System.out.println("MineTracker: Error handing files when opening/creating" + e);
+			//System.out.println("MineTracker: Error handing files when opening/creating" + e);
+			logger.log(Level.WARNING, "Error handing files when opening/creating" + e);
 		}
 	}
 	
@@ -223,7 +227,7 @@ public class MyListener implements Listener
 					if(Bukkit.getPlayer(players[i].toString().substring(17, players[i].toString().length()-1)).hasPermission("mt.staff"))
 					{
 						TextComponent msg = new TextComponent(ChatColor.translateAlternateColorCodes('&',"&a" + player.getName() + " &fhas mined a &b" + block.getType() + " &fblock. Click to &ateleport"));
-						msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mt tp " + players[i].toString().substring(17, players[i].toString().length()-1) + " " + block.getLocation().getX() + " " + block.getLocation().getY() + " " + block.getLocation().getZ() + " " + block.getWorld().getName()));
+						msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mt tp " + block.getLocation().getX() + " " + block.getLocation().getY() + " " + block.getLocation().getZ() + " " + block.getWorld().getName()));
 						Bukkit.getPlayer(players[i].toString().substring(17, players[i].toString().length()-1)).spigot().sendMessage(msg);
 						if(!soundOff)
 						{
@@ -244,7 +248,8 @@ public class MyListener implements Listener
 								}
 								catch (Exception e)
 								{
-									System.out.println("MineTracker: Error handing files when clearing" + e);
+									//System.out.println("MineTracker: Error handing files when clearing" + e);
+									logger.log(Level.WARNING, "Error handing files when clearing" + e);
 								}
 							}
 							else if(((Integer.parseInt(Long.toString(timeSeconds))/60)/(oreCount)) < 2)
@@ -284,7 +289,8 @@ public class MyListener implements Listener
 							}
 							catch (Exception e)
 							{
-								System.out.println("MineTracker: Error handing files when clearing" + e);
+								//System.out.println("MineTracker: Error handing files when clearing" + e);
+								logger.log(Level.WARNING, "MineTracker: Error handing files when clearing" + e);
 							}
 						}
 						else if(((Integer.parseInt(Long.toString(timeSeconds))/60)/(oreCount)) < 2)

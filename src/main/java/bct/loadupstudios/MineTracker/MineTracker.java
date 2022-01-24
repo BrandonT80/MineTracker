@@ -3,24 +3,25 @@ package bct.loadupstudios.MineTracker;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Location;
+import org.bukkit.World;
 
-import bct.loadupstudios.MineTracker.MyListener;
 
 public class MineTracker extends JavaPlugin
 {
 	FileConfiguration config = this.getConfig();
+	Logger logger = this.getLogger();
 	String folder = this.getDataFolder().getPath();
-	MyListener eventManager = new MyListener(config, folder);
+	MyListener eventManager = new MyListener(config, folder, logger);
 	ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 	//String commandOOLP = "";
 	File playersDir;
@@ -41,7 +42,8 @@ public class MineTracker extends JavaPlugin
 				//System.out.println(newS);
 				if(!reader.nextLine().substring(9,12).equals("1.1"))
 				{
-					System.out.println("[MineTracker] New Config File Found, Updating...");
+					//System.out.println("[MineTracker] New Config File Found, Updating...");
+					logger.log(Level.INFO, "New Config File Found, Updating...");
 					reader.close();
 					rewriteConfig();
 				}
@@ -53,14 +55,16 @@ public class MineTracker extends JavaPlugin
 			}
 			else
 			{
-				System.out.println("[MineTracker] Config File Empty, Updating...");
+				//System.out.println("[MineTracker] Config File Empty, Updating...");
+				logger.log(Level.INFO, "Config File Empty, Updating...");
 				reader.close();
 				rewriteConfig();
 			}
 		}
 		catch(Exception e)
 		{
-			System.out.println("Failed reading config File, please delete and reload");
+			//System.out.println("Failed reading config File, please delete and reload");
+			logger.log(Level.INFO, "Failed reading config File, please delete and reload");
 		}
 		
 		getServer().getPluginManager().registerEvents(eventManager, this);
@@ -77,8 +81,10 @@ public class MineTracker extends JavaPlugin
     {
         // TODO Insert logic to be performed when the plugin is disabled
 		//saveConfig();
-		System.out.println("[MineTracker] Disabling...");
-		System.out.println("[MineTracker] Removing Player Data...");
+		//System.out.println("[MineTracker] Disabling...");
+		//System.out.println("[MineTracker] Removing Player Data...");
+		logger.log(Level.INFO, "Disabling...");
+		logger.log(Level.INFO, "Removing Player Data...");
 		deleteDirectory(playersDir);
 		playersDir.mkdir();
     }
@@ -128,32 +134,54 @@ public class MineTracker extends JavaPlugin
 					}
 					return true;
 				case "tp":
-					if(eventManager.noPermSystem == "false" && Bukkit.getPlayer(args[1]).hasPermission("mt.staff"))
+					//System.out.println("Sender: " + sender.getName());
+					if(eventManager.noPermSystem == "false" && Bukkit.getPlayer(sender.getName()).hasPermission("mt.staff"))
 					{
 						//commandOOLP = "gamemode spectator " + args[1];
 						//Bukkit.dispatchCommand(console, commandOOLP);
-						Bukkit.getPlayer(args[1]).setGameMode(GameMode.SPECTATOR);
-						if(Float.parseFloat(args[3]) < 5.0 )
+						Bukkit.getPlayer(sender.getName()).setGameMode(GameMode.SPECTATOR);
+						if(Bukkit.getVersion().contains("1.18") && Bukkit.getWorld(args[4]).getEnvironment() == World.Environment.NORMAL)
 						{
-							//Location loc = new Location(Bukkit.getWorld(args[5]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
-							//commandOOLP = args[1] + " " + args[2] + " " + "5" + " " + args[4];
-							Location loc = new Location(Bukkit.getWorld(args[5]), Double.parseDouble(args[2]), 5.0, Double.parseDouble(args[4]));
-							Bukkit.getPlayer(args[1]).teleport(loc);
+							if(Float.parseFloat(args[2]) < -60.0 )
+							{
+								//Location loc = new Location(Bukkit.getWorld(args[5]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
+								//commandOOLP = args[1] + " " + args[2] + " " + "5" + " " + args[4];
+								Location loc = new Location(Bukkit.getWorld(args[4]), Double.parseDouble(args[1]), -60.0, Double.parseDouble(args[3]));
+								Bukkit.getPlayer(sender.getName()).teleport(loc);
+								Bukkit.getPlayer(sender.getName()).teleport(loc);
+							}
+							else
+							{
+								Location loc = new Location(Bukkit.getWorld(args[4]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]));
+								Bukkit.getPlayer(sender.getName()).teleport(loc);
+								Bukkit.getPlayer(sender.getName()).teleport(loc);
+							}
 						}
 						else
 						{
-							Location loc = new Location(Bukkit.getWorld(args[5]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
-							Bukkit.getPlayer(args[1]).teleport(loc);
+							if(Float.parseFloat(args[2]) < 5.0 )
+							{
+								//Location loc = new Location(Bukkit.getWorld(args[5]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
+								//commandOOLP = args[1] + " " + args[2] + " " + "5" + " " + args[4];
+								Location loc = new Location(Bukkit.getWorld(args[4]), Double.parseDouble(args[1]), 5.0, Double.parseDouble(args[3]));
+								Bukkit.getPlayer(sender.getName()).teleport(loc);
+								Bukkit.getPlayer(sender.getName()).teleport(loc);
+							}
+							else
+							{
+								Location loc = new Location(Bukkit.getWorld(args[4]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]));
+								Bukkit.getPlayer(sender.getName()).teleport(loc);
+								Bukkit.getPlayer(sender.getName()).teleport(loc);
+							}
 						}
 					}
 					else
 					{
 						for(int i = 0; i < eventManager.staffArray.length; i++)
 						{
-							if(Bukkit.getPlayer(eventManager.staffArray[i]) != null && Bukkit.getPlayer(eventManager.staffArray[i]) == Bukkit.getPlayer(args[1]))
+							if(Bukkit.getPlayer(eventManager.staffArray[i]) != null && Bukkit.getPlayer(eventManager.staffArray[i]) == Bukkit.getPlayer(sender.getName()))
 							{
-								Bukkit.getPlayer(args[1]).setGameMode(GameMode.SPECTATOR);
-								if(Float.parseFloat(args[3]) < 5.0 )
+								/*if(Float.parseFloat(args[3]) < 5.0 )
 								{
 									//Location loc = new Location(Bukkit.getWorld(args[5]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
 									//commandOOLP = args[1] + " " + args[2] + " " + "5" + " " + args[4];
@@ -166,6 +194,42 @@ public class MineTracker extends JavaPlugin
 									Bukkit.getPlayer(args[1]).teleport(loc);
 								}
 								break;
+								*/
+								Bukkit.getPlayer(sender.getName()).setGameMode(GameMode.SPECTATOR);
+								if(Bukkit.getVersion().contains("1.18") && Bukkit.getWorld(args[4]).getEnvironment() == World.Environment.NORMAL)
+								{
+									if(Float.parseFloat(args[2]) < -60.0 )
+									{
+										//Location loc = new Location(Bukkit.getWorld(args[5]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
+										//commandOOLP = args[1] + " " + args[2] + " " + "5" + " " + args[4];
+										Location loc = new Location(Bukkit.getWorld(args[4]), Double.parseDouble(args[1]), -60.0, Double.parseDouble(args[3]));
+										Bukkit.getPlayer(sender.getName()).teleport(loc);
+										Bukkit.getPlayer(sender.getName()).teleport(loc);
+									}
+									else
+									{
+										Location loc = new Location(Bukkit.getWorld(args[4]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]));
+										Bukkit.getPlayer(sender.getName()).teleport(loc);
+										Bukkit.getPlayer(sender.getName()).teleport(loc);
+									}
+								}
+								else
+								{
+									if(Float.parseFloat(args[2]) < 5.0 )
+									{
+										//Location loc = new Location(Bukkit.getWorld(args[5]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
+										//commandOOLP = args[1] + " " + args[2] + " " + "5" + " " + args[4];
+										Location loc = new Location(Bukkit.getWorld(args[4]), Double.parseDouble(args[1]), 5.0, Double.parseDouble(args[3]));
+										Bukkit.getPlayer(sender.getName()).teleport(loc);
+										Bukkit.getPlayer(sender.getName()).teleport(loc);
+									}
+									else
+									{
+										Location loc = new Location(Bukkit.getWorld(args[4]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]));
+										Bukkit.getPlayer(sender.getName()).teleport(loc);
+										Bukkit.getPlayer(sender.getName()).teleport(loc);
+									}
+								}
 							}
 						}
 					}
@@ -226,7 +290,8 @@ public class MineTracker extends JavaPlugin
 		}
 		catch(Exception e)
 		{
-			System.out.println("Failed to rewrite config file\n" + e);
+			//System.out.println("Failed to rewrite config file\n" + e);
+			logger.log(Level.WARNING, "Failed to rewrite config file\n" + e);
 		}
 	}
 }

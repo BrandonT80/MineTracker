@@ -1,0 +1,7 @@
+version: 1.1
+#Make this true ONLY if you do not use a permissions system
+nopermissionsystem: true
+#If the above is true, add in staff usernames here, add in like this
+#staffusernames: staffname1,staffname2,staffname3
+#Make sure its username comma username without spaces
+staffusernames: BrandonT80,DelthinTheRanger,staffname3
