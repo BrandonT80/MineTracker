@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"bct.loadupstudios.MineTracker","l":"MineTracker"},{"p":"bct.loadupstudios.MineTracker","l":"MyListener"}]

@@ -20,7 +20,12 @@ import java.io.File;
 import java.util.Scanner;
 import java.io.FileWriter;
 
-
+/**
+*Description: MyListener Class - Looks for block break events, pings staff, updates player information
+*Date: 1/24/2021
+*@author Brandon Taylor - LoadUpStudios
+*@version 2.1.0
+*/ 
 public class MyListener implements Listener
 {
 	boolean eventRunning = false; //This is to cancel the event running multiple times
@@ -36,7 +41,12 @@ public class MyListener implements Listener
 	String bVersion = "";
 	Logger logger;
 	
-	
+	/**
+	* Description: MyListener Constructor - Sets the config, logger, folder, and permissions system information
+	* @param FileConfiguration as conf (The config file), String as folder (The folder for players), Logger as l (the Logger for printing to console)
+	* @return None - Void
+	* @throws None
+	*/
 	MyListener(FileConfiguration conf, String folder, Logger l)
 	{
 		config = conf;
@@ -57,11 +67,23 @@ public class MyListener implements Listener
 		}
 	}
 	
+	/**
+	* Description: MyListener Constructor - Empty constructor that does nothing
+	* @param None
+	* @return None - Void
+	* @throws None
+	*/
 	MyListener()
 	{
 		
 	}
 	
+	/**
+	* Description: reload - Reloads the config file (Note you cannot reload the code)
+	* @param FileConfiguration as conf (The config file)
+	* @return None - Void
+	* @throws None
+	*/
 	public void reload(FileConfiguration conf)
 	{
 		config = conf;
@@ -76,6 +98,12 @@ public class MyListener implements Listener
 		System.out.println("Interact!");
     }*/
 	
+	/**
+	* Description: onInteract - Event handler for interations, checks block breaks and passes the on where needed
+	* @param BlockBreakEvent as event (The block break event and information)
+	* @return None - Void
+	* @throws None
+	*/
 	@EventHandler
     public void onInteract(BlockBreakEvent event)
     {
@@ -159,7 +187,12 @@ public class MyListener implements Listener
 		}
 	}
     
-	
+	/**
+	* Description: updateInformation - Updates the player information in the players folder
+	* @param Block as block (The block broken), Player as player (The player information on who broke the block)
+	* @return None - Void
+	* @throws None
+	*/
 	public void updateInformation ( Block block, Player player)
 	{
 		try
@@ -209,6 +242,12 @@ public class MyListener implements Listener
 		}
 	}
 	
+	/**
+	* Description: pingStaffOnline - Sends a message to the staff online about the block broken and player who broke
+	* @param Block as block (The block broken), Player as player (The player information on who broke the block), integer as oreCount (The total ore mined in x time), Long as timeSeconds (The time the x ore was mined in)
+	* @return None - Void
+	* @throws None
+	*/
 	public void pingStaffOnline( Block block, Player player, int oreCount, Long timeSeconds)
 	{		
 	

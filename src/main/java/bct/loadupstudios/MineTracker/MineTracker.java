@@ -1,21 +1,26 @@
-package bct.loadupstudios.MineTracker;
+package bct.loadupstudios.MineTracker;	//Package connecting
 
-import java.io.File;
-import java.io.FileWriter;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.Location;
-import org.bukkit.World;
+import java.io.File;		//Used for File Opening
+import java.io.FileWriter;	//Used for writing to files
+import java.util.Scanner;	//Used for reading files line-by-line
+import java.util.logging.Level;		//Used for types of logging
+import java.util.logging.Logger;	//Used for logging (Spigot prefers this to STDOUT)
+import org.bukkit.Bukkit;	//Bukkit code
+import org.bukkit.GameMode;	//For spectator game-mode changes
+import org.bukkit.command.Command;			//For executing commands
+import org.bukkit.command.CommandSender;	//For executing commands
+import org.bukkit.command.ConsoleCommandSender;	//For executing commands
+import org.bukkit.configuration.file.FileConfiguration;	//For Config File
+import org.bukkit.plugin.java.JavaPlugin;	//For Plugin information
+import org.bukkit.Location;	//For world locations
+import org.bukkit.World;	//For world information
 
-
+/**
+*Description: MineTracker Class - Holds start tasks, close tasks, command listening, reloading, and config file handling.
+*Date: 1/24/2021
+*@author Brandon Taylor - LoadUpStudios
+*@version 2.1.0
+*/ 
 public class MineTracker extends JavaPlugin
 {
 	FileConfiguration config = this.getConfig();
@@ -27,6 +32,12 @@ public class MineTracker extends JavaPlugin
 	File playersDir;
 	File configFile = new File(folder,"config.yml");
 	
+	/**
+	* Description: onEnable - Checks and reads the config, gets the server, and verifies directory for players.
+	* @param None
+	* @return None - Void
+	* @throws None
+	*/
 	@Override
     public void onEnable() 
     {
@@ -76,6 +87,12 @@ public class MineTracker extends JavaPlugin
 		
     }
 	
+	/**
+	* Description: onDisable - Deletes player directory and re-creates it as empty
+	* @param None
+	* @return None - Void
+	* @throws None
+	*/
 	@Override
     public void onDisable() 
     {
@@ -89,6 +106,12 @@ public class MineTracker extends JavaPlugin
 		playersDir.mkdir();
     }
 	
+	/**
+	* Description: onCommand - Checks for commands run begining with mt
+	* @param CommandSender as sender (person sending the command), Command as command (the command itself), String as label, String[] as args (Command arguments)
+	* @return Boolean - True if succeeded to run the command, False if command has failed
+	* @throws None
+	*/
 	@Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
     {
@@ -241,6 +264,12 @@ public class MineTracker extends JavaPlugin
 		return false;
     }
 	
+	/**
+	* Description: reload - Reloads the plugin (just reloads the config, not the code itself)
+	* @param None
+	* @return None - Void
+	* @throws None
+	*/
 	public void reload()
 	{
 		reloadConfig();
@@ -250,16 +279,31 @@ public class MineTracker extends JavaPlugin
 		eventManager.reload(config);
 	}
 	
-	public boolean deleteDirectory(File directoryToBeDeleted) {
+	/**
+	* Description: deleteDirectory - Deletes the specified directory recursively
+	* @param File as directoryToBeDeleted - The directory location to be deleted
+	* @return Boolean - True if the directory was deleted, False if the directory failed to delete
+	* @throws None
+	*/
+	public boolean deleteDirectory(File directoryToBeDeleted) 
+	{
 	    File[] allContents = directoryToBeDeleted.listFiles();
-	    if (allContents != null) {
-	        for (File file : allContents) {
+	    if (allContents != null) 
+	    {
+	        for (File file : allContents) 
+	        {
 	            deleteDirectory(file);
 	        }
 	    }
 	    return directoryToBeDeleted.delete();
 	}
 	
+	/**
+	* Description: rewriteConfig - Checks the config to see if it is the latest, if not it will attempt to update it without losing data
+	* @param File as directoryToBeDeleted - The directory location to be deleted
+	* @return None - Void
+	* @throws None
+	*/
 	public void rewriteConfig()
 	{
 		try
