@@ -19,7 +19,7 @@ import org.bukkit.World;	//For world information
 *Description: MineTracker Class - Holds start tasks, close tasks, command listening, reloading, and config file handling.
 *Date: 1/24/2021
 *@author Brandon Taylor - LoadUpStudios
-*@version 2.1.0
+*@version 2.2.0
 */ 
 public class MineTracker extends JavaPlugin
 {
@@ -125,7 +125,7 @@ public class MineTracker extends JavaPlugin
 						if(eventManager.soundOff)	//Check if the sound is on, if so disable it
 						{
 							eventManager.soundOff = false;	//Set the sound to false
-							sender.sendMessage("Ping Sounds Disabled For Everyone");	//Confirm to user the sound was disabled
+							sender.sendMessage("Ping Sounds Enabled For Everyone");	//Confirm to user the sound was disabled
 						}
 						else						//If sound is not on, enable it
 						{
@@ -142,7 +142,7 @@ public class MineTracker extends JavaPlugin
 								if(eventManager.soundOff)	//Check if the sound is on, if so disable it
 								{
 									eventManager.soundOff = false;	//Set the sound to false
-									sender.sendMessage("Ping Sounds Disabled For Everyone");	//Confirm to user the sound was disabled
+									sender.sendMessage("Ping Sounds Enabled For Everyone");	//Confirm to user the sound was disabled
 								}
 								else						//If sound is not on, enable it
 								{

@@ -24,7 +24,7 @@ import java.io.FileWriter;	//Used for writing to files
 *Description: MyListener Class - Looks for block break events, pings staff, updates player information
 *Date: 1/24/2021
 *@author Brandon Taylor - LoadUpStudios
-*@version 2.1.0
+*@version 2.2.0
 */ 
 public class MyListener implements Listener
 {
@@ -105,18 +105,23 @@ public class MyListener implements Listener
     public void onInteract(BlockBreakEvent event)
     {
 		//Beginning of onInteract - Handles version control as well as block breaking checking
-		
+		//System.out.println("T1");
 		if(!event.getPlayer().hasPermission("mt.bypass"))	//If the player is not bypassed (This works for perms or no perms)
 		{
+			//System.out.println("T2");
 			if(bVersion.contains("1.18") || bVersion.contains("1.17"))	//If the version is 1.17 or 1.18 (Has deepslate and ancient debris)
 			{
+				//System.out.println("T3");
 				//If the Y value is below 32 and the user is using a iron or better pickaxe (why care if they wasted the ore!)
 				if((event.getPlayer().getLocation().getY() < 32) && (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHERITE_PICKAXE || event.getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_PICKAXE || event.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE))
 				{
+					//System.out.println("T4");
 					if(event.getBlock() != null)	//If the block broke is not null (rare but it happens)
 					{
+						//System.out.println("T5");
 						if(event.getBlock().getType() != Material.STONE && event.getBlock().getType() != Material.NETHERRACK)	//If the block is not stone or netherrack (pointless to continue with if it is - Located before switch as it helps optimize)
 						{
+							//System.out.println("T6");
 							//System.out.println("TEST");
 							switch(event.getBlock().getBlockData().getMaterial())	//Get the block material
 							{
@@ -128,6 +133,7 @@ public class MyListener implements Listener
 								case EMERALD_ORE:
 								case DEEPSLATE_EMERALD_ORE:
 								case ANCIENT_DEBRIS:
+									//System.out.println("T7");
 									updateInformation(event.getBlock(), event.getPlayer());	//Update the player file
 									break;
 								default:
@@ -226,14 +232,27 @@ public class MyListener implements Listener
 				time = time.substring(6,time.length());		//Convert the time
 				veins = veins.substring(7,veins.length());	//Convert the veins
 				originalTime = originalTime.substring(15,originalTime.length());	//Convert the original time
-				if((player.getPlayerTime()/20) > ((Long.parseLong(time)/20) + 10 ))	//Check to see if the player violates a time constraint (/20 for TPS) (Checking if 10 seconds has passed for next vien)
+				if((player.getPlayerTime()/20) > ((Long.parseLong(time)/20) + 10 ) || (player.getWorld().toString().contains("nether") && (player.getPlayerTime()/20) < ((Long.parseLong(time)/20) - 1000)) || 
+						 (player.getWorld().toString().contains("nether") && (player.getPlayerTime()/20) < ((Long.parseLong(time)/20) + 1000)))	//Check to see if the player violates a time constraint (/20 for TPS) (Checking if 10 seconds has passed for next vien)
 				{
-					FileWriter writer = new FileWriter(playerFile);				//Open the file for writing
-					writer.write("Time: " + player.getPlayerTime());			//Write the time
-					writer.write("\nVeins: " + (Integer.parseInt(veins) + 1));	//Write the veins
-					writer.write("\nOriginal Time: " + originalTime);			//Write the original time back in
-					writer.close();												//Close the writer
-					pingStaffOnline(block, player, Integer.parseInt(veins) + 1, (player.getPlayerTime()/20)-(Long.parseLong(originalTime)/20));	//Ping online staff
+					if(player.getWorld().toString().contains("nether") && (player.getPlayerTime()/20) < ((Long.parseLong(time)/20) - 1000))
+					{
+						FileWriter writer = new FileWriter(playerFile);				//Open the file for writing
+						writer.write("Time: " + player.getPlayerTime());			//Write the time
+						writer.write("\nVeins: " + (Integer.parseInt(veins) + 1));	//Write the veins
+						writer.write("\nOriginal Time: " + player.getPlayerTime());			//Write the original time back in
+						writer.close();												//Close the writer
+						pingStaffOnline(block, player, Integer.parseInt(veins) + 1, (player.getPlayerTime()/20)-(Long.parseLong(originalTime)/20));	//Ping online staff
+					}
+					else
+					{
+						FileWriter writer = new FileWriter(playerFile);				//Open the file for writing
+						writer.write("Time: " + player.getPlayerTime());			//Write the time
+						writer.write("\nVeins: " + (Integer.parseInt(veins) + 1));	//Write the veins
+						writer.write("\nOriginal Time: " + originalTime);			//Write the original time back in
+						writer.close();												//Close the writer
+						pingStaffOnline(block, player, Integer.parseInt(veins) + 1, (player.getPlayerTime()/20)-(Long.parseLong(originalTime)/20));	//Ping online staff
+					}
 				}
 				else	
 				{
