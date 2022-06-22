@@ -15,8 +15,8 @@ permissions:
     desription: Wildcard Permission
     default: op
     children:
-      oa.staff: true
-      oa.bypass: true
+      mt.staff: true
+      mt.bypass: true
       mt.sound: true
   mt.staff:
     descripton: Ping Alert Permission
