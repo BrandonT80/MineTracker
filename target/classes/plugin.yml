@@ -1,6 +1,6 @@
 name: MineTracker
 main: bct.loadupstudios.MineTracker.MineTracker
-version: 3.2.2
+version: 3.3
 api-version: 1.13
 author: BrandonT80
 website: https://www.loadupstudios.com
@@ -15,8 +15,8 @@ permissions:
     desription: Wildcard Permission
     default: op
     children:
-      oa.staff: true
-      oa.bypass: true
+      mt.staff: true
+      mt.bypass: true
       mt.sound: true
   mt.staff:
     descripton: Ping Alert Permission

@@ -157,7 +157,7 @@ public class MineTracker extends JavaPlugin
 					if(eventManager.noPermSystem == "false" && Bukkit.getPlayer(sender.getName()).hasPermission("mt.staff"))	//If the player is staff and a perms system is in use
 					{
 						Bukkit.getPlayer(sender.getName()).setGameMode(GameMode.SPECTATOR);		//First put the player in spectator (YOU DONT WANT TO TELEPORT A PLAYER TO THEIR DEATH DO YOU?)
-						if(Bukkit.getVersion().contains("1.18") && Bukkit.getWorld(args[4]).getEnvironment() == World.Environment.NORMAL)	//If the version is 1.18 and they are in the overworld
+						if((Bukkit.getVersion().contains("1.19") && Bukkit.getWorld(args[4]).getEnvironment() == World.Environment.NORMAL) || (Bukkit.getVersion().contains("1.18") && Bukkit.getWorld(args[4]).getEnvironment() == World.Environment.NORMAL))	//If the version is 1.18 and they are in the overworld
 						{
 							if(Float.parseFloat(args[2]) < -60.0 )	//Check that the height isn't too close to the bedrock (1.18 is -60 and < is 5)
 							{

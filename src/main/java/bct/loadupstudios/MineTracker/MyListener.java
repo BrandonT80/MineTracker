@@ -109,7 +109,7 @@ public class MyListener implements Listener
 		if(!event.getPlayer().hasPermission("mt.bypass"))	//If the player is not bypassed (This works for perms or no perms)
 		{
 			//System.out.println("T2");
-			if(bVersion.contains("1.18") || bVersion.contains("1.17"))	//If the version is 1.17 or 1.18 (Has deepslate and ancient debris)
+			if(bVersion.contains("1.19") || bVersion.contains("1.18") || bVersion.contains("1.17"))	//If the version is 1.17 or 1.18 (Has deepslate and ancient debris)
 			{
 				//System.out.println("T3");
 				//If the Y value is below 32 and the user is using a iron or better pickaxe (why care if they wasted the ore!)
