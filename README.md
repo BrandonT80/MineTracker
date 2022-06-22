@@ -51,8 +51,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
 Xray is no new problem for server owners. There will never be a shortage of xrayers on your server and you probably find it to be a pain to try to catch them all. This plugin will help you identify players mining ores that are commonly mined by xrayers, and track the speed at which they obtain the ores. There will always need a person to verify the player as an xray user, but this plugin will help to pinpoint when you should investigate.
 
 Here's why you should use this plugin over other similar ones:
