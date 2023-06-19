@@ -19,6 +19,11 @@ import net.md_5.bungee.api.chat.TextComponent;	//TextComponent - Used for sendin
 import java.io.File;		//Used for File Opening
 import java.util.Scanner;	//Used for reading files line-by-line
 import java.io.FileWriter;	//Used for writing to files
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 /**
 *Description: MyListener Class - Looks for block break events, pings staff, updates player information
@@ -38,6 +43,9 @@ public class MyListener implements Listener
 	boolean soundOff = false;	//Sound is default on
 	String bVersion = "";		//Holds the version string of paper/minecraft
 	Logger logger;				//Logger for console messages
+	//LocalTime date;
+	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+	
 	
 	/**
 	* Description: MyListener Constructor - Sets the config, logger, folder, and permissions system information
@@ -109,7 +117,7 @@ public class MyListener implements Listener
 		if(!event.getPlayer().hasPermission("mt.bypass"))	//If the player is not bypassed (This works for perms or no perms)
 		{
 			//System.out.println("T2");
-			if(bVersion.contains("1.19") || bVersion.contains("1.18") || bVersion.contains("1.17"))	//If the version is 1.17 or 1.18 (Has deepslate and ancient debris)
+			if(bVersion.contains("1.20") || bVersion.contains("1.19") || bVersion.contains("1.18") || bVersion.contains("1.17"))	//If the version is 1.17 or 1.18 (Has deepslate and ancient debris)
 			{
 				//System.out.println("T3");
 				//If the Y value is below 32 and the user is using a iron or better pickaxe (why care if they wasted the ore!)
@@ -204,7 +212,7 @@ public class MyListener implements Listener
 	* @return None - Void
 	* @throws None
 	*/
-	public void updateInformation ( Block block, Player player)
+	public void updateInformation (Block block, Player player)
 	{
 		//Beginning of updateInformation - Updates the player file information and pings staff about the change
 		
@@ -215,9 +223,11 @@ public class MyListener implements Listener
 			{	
 				playerFile.createNewFile();									//Create the players file
 				FileWriter writer = new FileWriter(playerFile);				//Open the file for writing
-				writer.write("Time: " + player.getPlayerTime());			//Write the players time
+				writer.write("Time: " + dtf.format(LocalTime.now()));			//Write the players time
+				//writer.write("Time: " + player.getPlayerTime());			//Write the players time
 				writer.write("\nVeins: 1");									//Write the veins as 1 (first vein)
-				writer.write("\nOriginal Time: " + player.getPlayerTime());	//Write the original time of mining (useful later)
+				writer.write("\nOriginal Time: " + dtf.format(LocalTime.now()));	//Write the original time of mining (useful later)
+				//writer.write("\nOriginal Time: " + player.getPlayerTime());
 				writer.close();												//Close the file
 				pingStaffOnline(block, player, 1, null);					//Ping online staff
 			}
@@ -232,32 +242,47 @@ public class MyListener implements Listener
 				time = time.substring(6,time.length());		//Convert the time
 				veins = veins.substring(7,veins.length());	//Convert the veins
 				originalTime = originalTime.substring(15,originalTime.length());	//Convert the original time
-				if((player.getPlayerTime()/20) > ((Long.parseLong(time)/20) + 10 ) || (player.getWorld().toString().contains("nether") && (player.getPlayerTime()/20) < ((Long.parseLong(time)/20) - 1000)) || 
-						 (player.getWorld().toString().contains("nether") && (player.getPlayerTime()/20) < ((Long.parseLong(time)/20) + 1000)))	//Check to see if the player violates a time constraint (/20 for TPS) (Checking if 10 seconds has passed for next vien)
+				
+				if(getSecondsBetween(time, dtf.format(LocalTime.now()).toString()) > 10)
 				{
-					if(player.getWorld().toString().contains("nether") && (player.getPlayerTime()/20) < ((Long.parseLong(time)/20) - 1000))
+					//If < 15 minutes has passed since the first ore and the newest ore, combine. If more than 15 minutes has passed, start the clock over
+					if(getSecondsBetween(time, dtf.format(LocalTime.now()).toString()) < 900)
 					{
 						FileWriter writer = new FileWriter(playerFile);				//Open the file for writing
-						writer.write("Time: " + player.getPlayerTime());			//Write the time
+						writer.write("Time: " + dtf.format(LocalTime.now()));
+						//writer.write("Time: " + player.getPlayerTime());			//Write the time
 						writer.write("\nVeins: " + (Integer.parseInt(veins) + 1));	//Write the veins
-						writer.write("\nOriginal Time: " + player.getPlayerTime());			//Write the original time back in
+						writer.write("\nOriginal Time: " + originalTime);
+						//writer.write("\nOriginal Time: " + player.getPlayerTime());			//Write the original time back in
 						writer.close();												//Close the writer
-						pingStaffOnline(block, player, Integer.parseInt(veins) + 1, (player.getPlayerTime()/20)-(Long.parseLong(originalTime)/20));	//Ping online staff
+						pingStaffOnline(block, player, Integer.parseInt(veins) + 1, getSecondsBetween(originalTime, dtf.format(LocalTime.now()).toString()));	//Ping online staff
+						//pingStaffOnline(block, player, Integer.parseInt(veins) + 1, (player.getPlayerTime()/20)-(Long.parseLong(originalTime)/20));	//Ping online staff
 					}
 					else
 					{
 						FileWriter writer = new FileWriter(playerFile);				//Open the file for writing
-						writer.write("Time: " + player.getPlayerTime());			//Write the time
-						writer.write("\nVeins: " + (Integer.parseInt(veins) + 1));	//Write the veins
-						writer.write("\nOriginal Time: " + originalTime);			//Write the original time back in
+						writer.write("Time: " + dtf.format(LocalTime.now()));
+						//writer.write("Time: " + player.getPlayerTime());			//Write the time
+						writer.write("\nVeins: 1");	//Write the veins
+						writer.write("\nOriginal Time: " + dtf.format(LocalTime.now())); //Write the new time as original
 						writer.close();												//Close the writer
-						pingStaffOnline(block, player, Integer.parseInt(veins) + 1, (player.getPlayerTime()/20)-(Long.parseLong(originalTime)/20));	//Ping online staff
+						pingStaffOnline(block, player, 1, 0l);	//Ping online staff
+//						//pingStaffOnline(block, player, Integer.parseInt(veins) + 1, (player.getPlayerTime()/20)-(Long.parseLong(originalTime)/20));	//Ping online staff
 					}
+					//if(player.getWorld().toString().contains("nether") && (player.getPlayerTime()/20) < ((Long.parseLong(time)/20) - 1000))
+					
 				}
 				else	
 				{
 					//Time was not violated, continue (Left here in case a database is used later)
 				}
+//				if((player.getPlayerTime()/20) > ((Long.parseLong(time)/20) + 10 ) || (player.getWorld().toString().contains("nether") && (player.getPlayerTime()/20) < ((Long.parseLong(time)/20) - 1000)) || 
+//						 (player.getWorld().toString().contains("nether") && (player.getPlayerTime()/20) < ((Long.parseLong(time)/20) + 1000)))	
+//					//Check to see if the player violates a time constraint (/20 for TPS) (Checking if 10 seconds has passed for next vein)
+//				{
+//					
+//				}
+				
 			}
 		}
 		catch (Exception e)
@@ -307,9 +332,9 @@ public class MyListener implements Listener
 								{
 									File playerFile = new File(folder, "/Players/" + player.getName() + ".txt");	//Open player file
 									FileWriter writer = new FileWriter(playerFile);				//Open file for writing
-									writer.write("Time: " + player.getPlayerTime());			//Write the time
+									writer.write("Time: " + dtf.format(LocalTime.now()));			//Write the time
 									writer.write("\nVeins: 1");									//Write first vien
-									writer.write("\nOriginal Time: " + player.getPlayerTime());	//Write time as original time
+									writer.write("\nOriginal Time: " + dtf.format(LocalTime.now()));	//Write time as original time
 									writer.close();			//Close the file
 								}
 								catch (Exception e)	//If any error
@@ -352,9 +377,9 @@ public class MyListener implements Listener
 							{
 								File playerFile = new File(folder, "/Players/" + player.getName() + ".txt");	//Open player file
 								FileWriter writer = new FileWriter(playerFile);				//Open file for writing
-								writer.write("Time: " + player.getPlayerTime());			//Write the time
+								writer.write("Time: " + dtf.format(LocalTime.now()));			//Write the time
 								writer.write("\nVeins: 1");									//Write first vien
-								writer.write("\nOriginal Time: " + player.getPlayerTime());	//Write time as original time
+								writer.write("\nOriginal Time: " + dtf.format(LocalTime.now()));	//Write time as original time
 								writer.close();			//Close the file
 							}
 							catch (Exception e)	//If any error
@@ -362,7 +387,7 @@ public class MyListener implements Listener
 								logger.log(Level.WARNING, "MineTracker: Error handing files when clearing" + e);	//Log the error to console
 							}
 						}
-						else if(((Integer.parseInt(Long.toString(timeSeconds))/60)/(oreCount)) < 2)	//If the time to ore count is less than 2 minutes (Ex 5 minutes for 2 ores is 2.5 and doesn't violate with 2.5 minutes per vien)
+						else if(((Integer.parseInt(Long.toString(timeSeconds))/60)/(oreCount)) < 2)	//If the time to ore count is less than 2 minutes (Ex 5 minutes for 2 ores is 2.5 and doesn't violate with 2.5 minutes per vein)
 						{
 							//Ping staff with notice
 							Bukkit.getPlayer(staffArray[i]).sendMessage(ChatColor.translateAlternateColorCodes('&',"&cNotice: &b" + player.getName() + " &fhas mined &6" + oreCount + " veins &fin &c" + (Integer.parseInt(Long.toString(timeSeconds))/60) + " minutes!"));
@@ -373,5 +398,10 @@ public class MyListener implements Listener
 		}
 		
 		//End  of pingStaffOnline - Pinged staff online about the block break
+	}
+	
+	public long getSecondsBetween(String originalTime, String time)
+	{
+		return Duration.between(LocalTime.parse(originalTime, dtf), LocalTime.parse(time, dtf)).abs().getSeconds();
 	}
 }
