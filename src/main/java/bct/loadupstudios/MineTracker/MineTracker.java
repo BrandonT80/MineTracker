@@ -65,7 +65,7 @@ public class MineTracker extends JavaPlugin
 				reader.close();		//Close the reader (No longer needed to read as we are going to overwrite this file)
 				rewriteConfig();	//Call the re-write function
 			}
-		}
+		}//temp
 		catch(Exception e)	//Catch anything that can be caused by the config file being corrupted, suggest deleting
 		{
 			logger.log(Level.INFO, "Failed reading config File, please delete and reload");	//Log that the config is problematic, and should be deleted manually
