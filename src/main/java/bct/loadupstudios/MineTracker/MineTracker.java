@@ -280,7 +280,7 @@ public class MineTracker extends JavaPlugin
 	
 	/**
 	* Description: rewriteConfig - Checks the config to see if it is the latest, if not it will attempt to update it without losing data
-	* @param File as directoryToBeDeleted - The directory location to be deleted
+	* @param None
 	* @return None - Void
 	* @throws None
 	*/
